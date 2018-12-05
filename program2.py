@@ -5,7 +5,7 @@ with open('data.csv')  as csvfile:
     for row in readcsv:		
         print(row)
         data.append(row)
-def Domain(): #All possible unique values an attribute/field can hold.
+def Domain():
     D =[]
     for i in range(len(data[0])):
         D.append(list(set([ele[i] for ele in data])))
@@ -13,12 +13,12 @@ def Domain(): #All possible unique values an attribute/field can hold.
 D = Domain()
 def consistant(h1, h2):
     for x, y in zip(h1, h2):
-        if not (x == "?" or (x != "ɸ" and (x == y or y == "ɸ"))):
+        if not (x == "?" or (x != "0" and (x == y or y == "0"))):
             return False
     return True
 def candidate_elimination():
     G = {('?')*(len(data[0]) - 1)}
-    S = ['ɸ']*(len(data[0]) - 1)
+    S = ['0']*(len(data[0]) - 1)
     no = 0
     print("\n G[{0}]:".format(no), G)
     print("\n S[{0}]:".format(no), S)
@@ -30,22 +30,22 @@ def candidate_elimination():
             G = {g for g in G if consistant(g,inp)}
             for s,x in zip(S,inp):   # similar to find-s
                 if not s==x:
-                    S[i] = '?' if s != 'ɸ' else x
+                    S[i] = '?' if s != '0' else x
                 i += 1
         else:
-            S = S #unaffected for this eg.
+            S = S 
             Gprev = G.copy()
-            for g in Gprev: #for each hypothesis
-                if g not in G: # if g gets removed.
+            for g in Gprev: 
+                if g not in G:  
                     continue
-                for i in range(len(g)):  #for every fiels/atribute
-                    if g[i] == "?":  #if it can be more generalized.
-                        for val in D[i]: # for each possible values in domain.
-                            if inp[i] != val and val == S[i]: # check if this possible value in domain is applicable.
+                for i in range(len(g)): 
+                    if g[i] == "?":  
+                        for val in D[i]: 
+                            if inp[i] != val and val == S[i]: 
                                 g_new = g[:i] + (val,) + g[i+1:]
                                 G.add(g_new)
                     else:
-                        G.add(g)  # difference_update() used to remove the items from the set which is passed to it.            
+                        G.add(g)           
                 G.difference_update([h for h in G if
                                  any([consistant(h, g1) for g1 in G if h != g1])])
         print("\n G[{0}]:".format(no), G)
